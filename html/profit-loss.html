@@ -1,0 +1,336 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profit & Loss - Khoium's Accounting</title>
+    
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Flatpickr Calendar CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
+    
+    <!-- Custom CSS files -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/accounting.css">
+    <link rel="stylesheet" href="css/reports.css">
+
+    <style>
+        .flatpickr-calendar {
+            font-family: "Montserrat", sans-serif;
+            border-radius: 0.5rem;
+            box-shadow: var(--box-shadow);
+            border: var(--border);
+        }
+        .flatpickr-day.selected {
+            background: var(--main-color);
+            border-color: var(--main-color);
+        }
+        .flatpickr-day.selected:hover {
+            background: var(--secondary-color);
+        }
+        .flatpickr-months .flatpickr-month {
+            background: var(--main-color);
+        }
+        .date-picker {
+            background: white;
+            cursor: pointer;
+        }
+        .date-picker:hover {
+            border-color: var(--main-color);
+        }
+        
+        /* Report table styling to match balance sheet */
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+            font-size: 1.4rem;
+            box-shadow: var(--box-shadow);
+        }
+        .report-table th {
+            background: var(--main-color);
+            color: white;
+            padding: 1.2rem;
+            text-align: left;
+            font-weight: 600;
+        }
+        .report-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            color: var(--black);
+        }
+        
+        .group-header {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+        .group-header td {
+            color: var(--main-color);
+            border-top: 2px solid var(--main-color);
+            border-bottom: 2px solid var(--main-color);
+            font-size: 1.6rem;
+        }
+        
+        .ledger-row td:first-child {
+            padding-left: 4rem !important;
+        }
+        .ledger-row td:first-child::before {
+            content: "↳ ";
+            color: var(--secondary-color);
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+        .ledger-row:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .total-row {
+            background-color: #e8e8e8;
+            font-weight: bold;
+        }
+        .total-row td {
+            border-top: 2px solid var(--main-color);
+            border-bottom: 2px solid var(--main-color);
+        }
+        
+        .grand-total-row {
+            background: linear-gradient(135deg, var(--main-color), var(--secondary-color));
+            color: white;
+            font-weight: bold;
+        }
+        .grand-total-row td {
+            color: white;
+            border: none;
+        }
+        
+        .report-summary {
+            margin-top: 3rem;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 1rem;
+        }
+        .summary-item {
+            text-align: center;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .summary-item .label {
+            font-size: 1.4rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+        .summary-item .value {
+            font-size: 2.4rem;
+            font-weight: bold;
+        }
+        .summary-item .value.positive {
+            color: #28a745;
+        }
+        .summary-item .value.negative {
+            color: #dc3545;
+        }
+        
+        .section-title {
+            margin-top: 2rem;
+            color: var(--main-color);
+            font-size: 2rem;
+            border-bottom: 2px solid var(--main-color);
+            padding-bottom: 0.5rem;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 5rem;
+            color: var(--light-color);
+            font-size: 1.8rem;
+        }
+
+        .alert-success {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            border-radius: .5rem;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .alert-warning {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+            border-radius: .5rem;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="flex">
+            <a href="index.html" class="logo"><i class="fas fa-calculator"></i> Khoium's Accounting</a>
+            <nav class="navbar">
+                <ul>
+                    <li><a href="index.html">home</a></li>
+                    <li><a href="about.html">about</a></li>
+                    <li><a href="index.html#payment">accounting</a></li>
+                    <li><a href="#">reports <i class="fas fa-angle-down"></i></a>
+                        <ul>
+                            <li><a href="ledger.html">ledger</a></li>
+                            <li><a href="trial-balance.html">trial balance</a></li>
+                            <li><a href="profit-loss.html" class="active">profit & loss</a></li>
+                            <li><a href="balance-sheet.html">balance sheet</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="contact.html">contact</a></li>
+                    <li><a href="audit.html">audit</a></li>
+                </ul>
+            </nav>
+            <div id="menu-btn" class="fas fa-bars-staggered"></div>
+        </div>
+    </header>
+
+    <main>
+        <section class="report-section">
+            <h1 class="heading">profit & <span>loss</span></h1>
+            
+            <div class="report-controls">
+                <div class="date-range" style="display: flex; align-items: flex-end; gap: 2rem;">
+                    <div class="form-group">
+                        <label for="as-of-date"><i class="fas fa-calendar-alt"></i> As of Date:</label>
+                        <input type="text" id="as-of-date" class="date-picker" placeholder="Select date" readonly>
+                    </div>
+                    <button class="btn" onclick="loadProfitLoss()"><i class="fas fa-search"></i> Load Report</button>
+                </div>
+                <div class="report-actions">
+                    <button class="btn" onclick="printReport()"><i class="fas fa-print"></i> Print</button>
+                    <button class="btn" onclick="exportToPDF()"><i class="fas fa-file-pdf"></i> Export PDF</button>
+                    <button class="btn" onclick="exportToExcel()"><i class="fas fa-file-excel"></i> Export Excel</button>
+                </div>
+            </div>
+
+            <div id="report-content" class="report-content">
+                <div class="loading">Select as-of date to view profit & loss</div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div>
+            <div class="share">
+                <a href="#" class="fab fa-facebook-f"></a>
+                <a href="#" class="fab fa-twitter"></a>
+                <a href="#" class="fab fa-linkedin"></a>
+                <a href="#" class="fab fa-instagram"></a>
+                <a href="#" class="fab fa-youtube"></a>
+            </div>
+            <div class="credit">&copy; 2026 Khoium's Accounting. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="js/script.js"></script>
+    <script src="js/accounting.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/reports.js"></script>
+
+    <script>
+        // Initialize date picker
+        flatpickr("#as-of-date", {
+            dateFormat: "Y-m-d",
+            defaultDate: "today",
+            allowInput: true,
+            altInput: true,
+            altFormat: "F j, Y",
+            maxDate: "today"
+        });
+
+        // Export functions
+        function printReport() { window.print(); }
+        function exportToPDF() { window.print(); }
+        
+        function exportToExcel() {
+            const content = document.getElementById('report-content').innerHTML;
+            const style = `
+                <style>
+                    table { border-collapse: collapse; width: 100%; }
+                    th { background: #3c40c6; color: white; padding: 10px; }
+                    td { padding: 8px; border: 1px solid #ddd; }
+                    .group-header { background: #f0f0f0; font-weight: bold; }
+                    .ledger-row td:first-child { padding-left: 30px; }
+                    .total-row { background: #e8e8e8; font-weight: bold; }
+                    .grand-total-row { background: linear-gradient(135deg, #3c40c6, #009432); color: white; }
+                    .positive { color: #28a745; }
+                    .negative { color: #dc3545; }
+                </style>
+            `;
+            const fullHTML = `<html><head>${style}</head><body>${content}</body></html>`;
+            const blob = new Blob([fullHTML], { type: 'application/vnd.ms-excel' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'profit-loss.xls';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Safety checks
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof transactions === 'undefined') window.transactions = [];
+            if (typeof ledgers === 'undefined') window.ledgers = [];
+            if (typeof banks === 'undefined') window.banks = [];
+            if (typeof customSubGroups === 'undefined') window.customSubGroups = [];
+            console.log('Safety checks completed');
+        });
+    </script>
+    <!-- Dark Mode Initialization -->
+<script>
+    // Initialize dark mode when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize dark mode if function exists
+        if (typeof initDarkMode === 'function') {
+            initDarkMode();
+        }
+        
+        // Setup dark mode toggle button
+        const toggleBtn = document.getElementById('darkModeToggle');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', function() {
+                if (typeof toggleDarkMode === 'function') {
+                    toggleDarkMode();
+                }
+            });
+        }
+        
+        // Setup dark mode settings button
+        const settingsBtn = document.getElementById('darkModeSettingsBtn');
+        if (settingsBtn && typeof showDarkModeSettings === 'function') {
+            settingsBtn.addEventListener('click', function() {
+                showDarkModeSettings();
+            });
+        }
+        
+        // Setup keyboard shortcut
+        if (typeof setupDarkModeKeyboardShortcut === 'function') {
+            setupDarkModeKeyboardShortcut();
+        }
+    });
+</script>
+</body>
+</html>

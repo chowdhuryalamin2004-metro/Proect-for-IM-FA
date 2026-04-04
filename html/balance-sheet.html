@@ -1,0 +1,227 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balance Sheet - Khoium's Accounting</title>
+    
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Flatpickr Calendar CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
+    
+    <!-- custom css file link -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/accounting.css">
+    <link rel="stylesheet" href="css/reports.css">
+
+    <style>
+        /* Calendar customization */
+        .flatpickr-calendar {
+            font-family: "Montserrat", sans-serif;
+            border-radius: 0.5rem;
+            box-shadow: var(--box-shadow);
+            border: var(--border);
+        }
+        
+        .flatpickr-day.selected {
+            background: var(--main-color);
+            border-color: var(--main-color);
+        }
+        
+        .flatpickr-day.selected:hover {
+            background: var(--secondary-color);
+        }
+        
+        .flatpickr-months .flatpickr-month {
+            background: var(--main-color);
+        }
+        
+        .date-picker {
+            background: white;
+            cursor: pointer;
+        }
+        
+        .date-picker:hover {
+            border-color: var(--main-color);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- header section starts -->
+    <header class="header">
+        <section class="flex">
+            <a href="index.html" class="logo"> <i class="fas fa-calculator"></i> Khoium's Accounting</a>
+
+            <nav class="navbar">
+                <ul>
+                    <li><a href="index.html">home</a></li>
+                    <li><a href="about.html">about</a></li>
+                    <li><a href="index.html#payment">accounting</a></li>
+                    <li><a href="#">reports <i class="fas fa-angle-down"></i></a>
+                        <ul>
+                            <li><a href="ledger.html">ledger</a></li>
+                            <li><a href="trial-balance.html">trial balance</a></li>
+                            <li><a href="profit-loss.html">profit & loss</a></li>
+                            <li><a href="balance-sheet.html" class="active">balance sheet</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="contact.html">contact</a></li>
+                    <li><a href="audit.html">audit</a></li>
+                </ul>
+            </nav>
+
+            <div id="menu-btn" class="fas fa-bars-staggered"></div>
+
+        </section>
+    </header>
+    <!-- header section ends -->
+
+    <!-- main content starts -->
+    <main>
+        <section class="report-section">
+            <h1 class="heading">balance <span>sheet</span></h1>
+            
+            <div class="report-controls">
+                <div class="date-range">
+                    <div class="form-group">
+                        <label for="as-of-date">As of Date:</label>
+                        <input type="text" id="as-of-date" class="date-picker" placeholder="Select date" readonly>
+                    </div>
+                    <button class="btn" onclick="loadBalanceSheet()"><i class="fas fa-search"></i> Load Report</button>
+                </div>
+                <div class="report-actions">
+                    <button class="btn" onclick="printReport()"><i class="fas fa-print"></i> Print</button>
+                    <button class="btn" onclick="exportToPDF()"><i class="fas fa-file-pdf"></i> Export PDF</button>
+                    <button class="btn" onclick="exportToExcel()"><i class="fas fa-file-excel"></i> Export Excel</button>
+                </div>
+            </div>
+
+            <div id="report-content" class="report-content">
+                <div class="loading">Select a date to view balance sheet</div>
+            </div>
+        </section>
+    </main>
+    <!-- main content ends -->
+
+    <!-- footer section starts -->
+    <footer class="footer">
+        <section>
+            <div class="share">
+                <a href="#" class="fab fa-facebook-f"></a>
+                <a href="#" class="fab fa-twitter"></a>
+                <a href="#" class="fab fa-linkedin"></a>
+                <a href="#" class="fab fa-instagram"></a>
+                <a href="#" class="fab fa-youtube"></a>
+            </div>
+            <div class="credit">&copy; 2026 Khoium's Accounting. All rights reserved.</div>
+        </section>
+    </footer>
+    <!-- footer section ends -->
+
+    <!-- Flatpickr Calendar JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    
+    <!-- custom js file link -->
+    <script src="js/script.js"></script>
+    <script src="js/accounting.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/reports.js"></script>
+    
+    <script>
+        // Initialize date picker
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof flatpickr !== 'undefined') {
+                flatpickr("#as-of-date", {
+                    dateFormat: "Y-m-d",
+                    defaultDate: "today",
+                    allowInput: true,
+                    altInput: true,
+                    altFormat: "F j, Y",
+                    theme: "material_blue",
+                    maxDate: "today"
+                });
+            }
+        });
+
+        // Export functions
+        function printReport() {
+            window.print();
+        }
+
+        function exportToPDF() {
+            window.print();
+        }
+
+        function exportToExcel() {
+            const reportContent = document.getElementById('report-content').innerHTML;
+            const style = `
+                <style>
+                    table { border-collapse: collapse; width: 100%; }
+                    th { background: #3c40c6; color: white; padding: 10px; }
+                    td { padding: 8px; border: 1px solid #ddd; }
+                    .total-row { background: #f4faff; font-weight: bold; }
+                    .positive { color: #28a745; }
+                    .negative { color: #dc3545; }
+                </style>
+            `;
+            const fullHTML = `<html><head>${style}</head><body>${reportContent}</body></html>`;
+            const blob = new Blob([fullHTML], { type: 'application/vnd.ms-excel' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'balance-sheet.xls';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+    </script>
+    
+    <!-- Safety checks -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof transactions === 'undefined') window.transactions = [];
+        if (typeof ledgers === 'undefined') window.ledgers = [];
+        if (typeof banks === 'undefined') window.banks = [];
+        if (typeof customSubGroups === 'undefined') window.customSubGroups = [];
+        console.log('Safety checks completed');
+    });
+    </script>
+    <!-- Dark Mode Initialization -->
+<script>
+    // Initialize dark mode when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize dark mode if function exists
+        if (typeof initDarkMode === 'function') {
+            initDarkMode();
+        }
+        
+        // Setup dark mode toggle button
+        const toggleBtn = document.getElementById('darkModeToggle');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', function() {
+                if (typeof toggleDarkMode === 'function') {
+                    toggleDarkMode();
+                }
+            });
+        }
+        
+        // Setup dark mode settings button
+        const settingsBtn = document.getElementById('darkModeSettingsBtn');
+        if (settingsBtn && typeof showDarkModeSettings === 'function') {
+            settingsBtn.addEventListener('click', function() {
+                showDarkModeSettings();
+            });
+        }
+        
+        // Setup keyboard shortcut
+        if (typeof setupDarkModeKeyboardShortcut === 'function') {
+            setupDarkModeKeyboardShortcut();
+        }
+    });
+</script>
+</body>
+</html>
