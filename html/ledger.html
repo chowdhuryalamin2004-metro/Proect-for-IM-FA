@@ -3,287 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ledger Report - AcctBook</title>
-    
-    <!-- Font Awesome CDN -->
+    <title>Ledger - Moonlight Trading</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Flatpickr Calendar CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
-    
-    <!-- custom css file link -->
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/accounting.css">
-    <link rel="stylesheet" href="css/reports.css">
-
     <style>
-        /* Calendar customization */
-        .flatpickr-calendar {
-            font-family: "Montserrat", sans-serif;
-            border-radius: 0.5rem;
-            box-shadow: var(--box-shadow);
-            border: var(--border);
-        }
-        
-        .flatpickr-day.selected {
-            background: var(--main-color);
-            border-color: var(--main-color);
-        }
-        
-        .flatpickr-day.selected:hover {
-            background: var(--secondary-color);
-        }
-        
-        .flatpickr-months .flatpickr-month {
-            background: var(--main-color);
-        }
-        
-        .date-picker {
-            background: white;
-            cursor: pointer;
-        }
-        
-        .date-picker:hover {
-            border-color: var(--main-color);
-        }
-        
-        /* Subgroup styles */
-        .subgroup-indicator {
-            display: inline-block;
-            padding: 0.2rem 0.8rem;
-            background: var(--secondary-color);
-            color: white;
-            border-radius: 1rem;
-            font-size: 1.1rem;
-            margin-left: 0.5rem;
-        }
-        
-        .report-table td.subgroup-cell {
-            position: relative;
-        }
-        
-        .report-table td.subgroup-cell::before {
-            content: "↳ ";
-            color: var(--secondary-color);
-            font-weight: bold;
-            margin-right: 0.5rem;
-        }
-        
-        .subgroup-badge {
-            background: var(--bg-color);
-            color: var(--secondary-color);
-            padding: 0.3rem 0.8rem;
-            border-radius: 1rem;
-            font-size: 1.1rem;
-            border: 1px solid var(--secondary-color);
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        :root { --primary: #2c3e50; --secondary: #27ae60; --white: #fff; --dark: #2c3e50; --light: #ecf0f1; --border: 1px solid #ddd; --shadow: 0 5px 15px rgba(0,0,0,.1); }
+        body { background: #f5f7fa; }
+        .header { background: var(--white); box-shadow: var(--shadow); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .logo { font-size: 2rem; font-weight: bold; color: var(--primary); text-decoration: none; }
+        .logo i { color: var(--secondary); }
+        .navbar ul { display: flex; list-style: none; gap: 1.5rem; flex-wrap: wrap; }
+        .navbar a { text-decoration: none; color: var(--dark); font-size: 1.4rem; }
+        .navbar a:hover { color: var(--secondary); }
+        main { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
+        .heading { font-size: 2.5rem; text-align: center; margin-bottom: 2rem; color: var(--dark); }
+        .heading span { color: var(--secondary); }
+        .controls { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; align-items: center; }
+        select, button { padding: .8rem 1.5rem; font-size: 1.4rem; border-radius: .5rem; border: var(--border); }
+        button { background: var(--secondary); color: white; cursor: pointer; border: none; }
+        table { width: 100%; border-collapse: collapse; background: var(--white); border-radius: 1rem; overflow: hidden; }
+        th, td { padding: 1rem; text-align: left; border-bottom: var(--border); font-size: 1.3rem; }
+        th { background: var(--primary); color: white; }
+        .footer { background: var(--primary); color: white; text-align: center; padding: 2rem; margin-top: 3rem; }
+        @media (max-width: 600px) { th, td { font-size: 1.1rem; padding: .5rem; } }
     </style>
 </head>
 <body>
-
-    <!-- header section starts -->
-    <header class="header">
-        <div class="flex">
-            <a href="index.html" class="logo"> <i class="fas fa-calculator"></i> AcctBook</a>
-
-            <nav class="navbar">
-                <ul>
-                    <li><a href="index.html">home</a></li>
-                    <li><a href="about.html">about</a></li>
-                    <li><a href="index.html#payment">accounting</a></li>
-                    <li><a href="#">reports <i class="fas fa-angle-down"></i></a>
-                        <ul>
-                            <li><a href="ledger.html" class="active">ledger</a></li>
-                            <li><a href="trial-balance.html">trial balance</a></li>
-                            <li><a href="profit-loss.html">profit & loss</a></li>
-                            <li><a href="balance-sheet.html">balance sheet</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="contact.html">contact</a></li>
-                    <li><a href="audit.html">audit</a></li>
-                </ul>
-            </nav>
-
-            <div id="menu-btn" class="fas fa-bars-staggered"></div>
-
-        </div>
-    </header>
-    <!-- header section ends -->
-
-    <!-- main content starts -->
-    <main>
-        <section class="report-section">
-            <h1 class="heading">ledger <span>report</span></h1>
-            
-            <div class="report-controls">
-                <div class="date-range">
-                    <div class="form-group">
-                        <label for="as-of-date"><i class="fas fa-calendar-alt"></i> As of Date:</label>
-                        <input type="text" id="as-of-date" class="date-picker" placeholder="Select date" readonly>
-                    </div>
-                    <button class="btn" onclick="loadLedgerReport()"><i class="fas fa-search"></i> Load Report</button>
-                </div>
-                <div class="report-actions">
-                    <button class="btn" onclick="printReport()"><i class="fas fa-print"></i> Print</button>
-                    <button class="btn" onclick="exportToPDF()"><i class="fas fa-file-pdf"></i> Export PDF</button>
-                    <button class="btn" onclick="exportToExcel()"><i class="fas fa-file-excel"></i> Export Excel</button>
-                </div>
-            </div>
-
-            <div class="ledger-selector">
-                <label for="ledger-select"><i class="fas fa-book"></i> Select Ledger:</label>
-                <select id="ledger-select" class="ledger-select" onchange="loadLedgerReport()">
-                    <option value="">-- Select Ledger --</option>
-                </select>
-            </div>
-
-            <div id="report-content" class="report-content">
-                <div class="loading">Select a ledger and date to view report</div>
-            </div>
-        </section>
-    </main>
-    <!-- main content ends -->
-
-    <!-- footer section starts -->
-    <footer class="footer">
-        <div>
-            <div class="share">
-                <a href="#" class="fab fa-facebook-f"></a>
-                <a href="#" class="fab fa-twitter"></a>
-                <a href="#" class="fab fa-linkedin"></a>
-                <a href="#" class="fab fa-instagram"></a>
-                <a href="#" class="fab fa-youtube"></a>
-            </div>
-            <div class="credit">&copy; 2026 AcctBook. All rights reserved.</div>
-        </div>
-    </footer>
-    <!-- footer section ends -->
-
-    <!-- Flatpickr Calendar JS -->
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    
-    <!-- custom js file link -->
-    <script src="js/script.js"></script>
-    <script src="js/accounting.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/reports.js"></script>
-
-    <script>
-        // Initialize date picker
-        flatpickr("#as-of-date", {
-            dateFormat: "Y-m-d",
-            defaultDate: "today",
-            allowInput: true,
-            altInput: true,
-            altFormat: "F j, Y",
-            maxDate: "today"
-        });
-
-        // Load ledgers for selector
-        function loadLedgersForSelector() {
-            const ledgerSelect = document.getElementById('ledger-select');
-            if (!ledgerSelect) return;
-            
-            let options = '<option value="">-- Select Ledger --</option>';
-            
-            // Get all unique ledgers from transactions
-            if (typeof transactions !== 'undefined' && transactions.length > 0) {
-                const uniqueLedgers = [...new Set(transactions.map(t => t.ledger))];
-                
-                uniqueLedgers.sort().forEach(ledger => {
-                    options += `<option value="${ledger}">${ledger}</option>`;
-                });
-            }
-            
-            ledgerSelect.innerHTML = options;
-        }
-
-        // Load ledgers on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            loadLedgersForSelector();
-        });
-
-        // Export functions
-        function printReport() {
-            window.print();
-        }
-
-        function exportToPDF() {
-            window.print();
-        }
-
-        function exportToExcel() {
-            const reportContent = document.getElementById('report-content').innerHTML;
-            const style = `
-                <style>
-                    table { border-collapse: collapse; width: 100%; }
-                    th { background: #3c40c6; color: white; padding: 10px; }
-                    td { padding: 8px; border: 1px solid #ddd; }
-                    .subgroup-badge { 
-                        background: #f4faff; 
-                        color: #009432; 
-                        padding: 3px 8px; 
-                        border-radius: 12px; 
-                        font-size: 11px;
-                        border: 1px solid #009432;
-                    }
-                    .total-row { background: #f4faff; font-weight: bold; }
-                </style>
-            `;
-            const fullHTML = `<html><head>${style}</head><body>${reportContent}</body></html>`;
-            const blob = new Blob([fullHTML], { type: 'application/vnd.ms-excel' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'ledger-report.xls';
-            a.click();
-            window.URL.revokeObjectURL(url);
-        }
-    </script>
-    
-    <!-- Safety checks -->
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        if (typeof transactions === 'undefined') window.transactions = [];
-        if (typeof ledgers === 'undefined') window.ledgers = [];
-        if (typeof banks === 'undefined') window.banks = [];
-        if (typeof customSubGroups === 'undefined') window.customSubGroups = [];
-        console.log('Safety checks completed');
-    });
-    </script>
-    <!-- Dark Mode Initialization -->
+<header class="header">
+    <a href="index.html" class="logo"><i class="fas fa-chart-line"></i> Moonlight Trading</a>
+    <nav class="navbar"><ul><li><a href="index.html">Home</a></li><li><a href="ledger.html">Ledger</a></li><li><a href="trial-balance.html">Trial Balance</a></li><li><a href="profit-loss.html">P&L</a></li><li><a href="balance-sheet.html">Balance Sheet</a></li></ul></nav>
+</header>
+<main>
+    <h1 class="heading"><span>Ledger</span> Book</h1>
+    <div class="controls">
+        <select id="ledger-select"><option value="">-- Select Ledger --</option></select>
+        <button onclick="loadLedger()"><i class="fas fa-search"></i> View Ledger</button>
+    </div>
+    <div id="ledger-result"></div>
+</main>
+<footer class="footer"><div>&copy; 2026 Moonlight Trading Company. All rights reserved.</div></footer>
 <script>
-    // Initialize dark mode when page loads
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize dark mode if function exists
-        if (typeof initDarkMode === 'function') {
-            initDarkMode();
-        }
-        
-        // Setup dark mode toggle button
-        const toggleBtn = document.getElementById('darkModeToggle');
-        if (toggleBtn) {
-            toggleBtn.addEventListener('click', function() {
-                if (typeof toggleDarkMode === 'function') {
-                    toggleDarkMode();
-                }
-            });
-        }
-        
-        // Setup dark mode settings button
-        const settingsBtn = document.getElementById('darkModeSettingsBtn');
-        if (settingsBtn && typeof showDarkModeSettings === 'function') {
-            settingsBtn.addEventListener('click', function() {
-                showDarkModeSettings();
-            });
-        }
-        
-        // Setup keyboard shortcut
-        if (typeof setupDarkModeKeyboardShortcut === 'function') {
-            setupDarkModeKeyboardShortcut();
-        }
+let transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+let ledgers = [...new Set(transactions.map(t => t.ledger))];
+let sel = document.getElementById('ledger-select');
+ledgers.forEach(l => { let opt = document.createElement('option'); opt.value = l; opt.textContent = l; sel.appendChild(opt); });
+function loadLedger() {
+    let ledger = sel.value;
+    if (!ledger) { alert('Please select a ledger'); return; }
+    let filtered = transactions.filter(t => t.ledger === ledger);
+    let balance = 0;
+    let html = `<table><thead><tr><th>Date</th><th>Type</th><th>Debit</th><th>Credit</th><th>Balance</th><th>Narration</th></tr></thead><tbody>`;
+    filtered.forEach(t => {
+        balance += (t.debit || 0) - (t.credit || 0);
+        html += `<tr><td>${t.date}</td><td>${t.type}</td><td>${t.debit ? t.debit.toFixed(2) : '-'}</td><td>${t.credit ? t.credit.toFixed(2) : '-'}</td><td>${balance.toFixed(2)}</td><td>${t.narration || '-'}</td></tr>`;
     });
+    html += `<tr style="background:#f0f0f0;font-weight:bold"><td colspan="4">Net Balance</td><td colspan="2">${balance.toFixed(2)}</td></tr>`;
+    html += `</tbody></table>`;
+    document.getElementById('ledger-result').innerHTML = html;
+}
 </script>
 </body>
 </html>
